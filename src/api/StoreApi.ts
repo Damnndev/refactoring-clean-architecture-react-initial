@@ -18,7 +18,6 @@ export class StoreApi {
             this.cache = this.cache.map(product => {
                 return product.id === productToUpdate.id ? productToUpdate : product;
             });
-  
         } else {
             this.cache = [...this.cache, productToUpdate];
         }
@@ -38,7 +37,6 @@ export class StoreApi {
     }
 
     private async getProduct(id: number): Promise<RemoteProduct> {
-
         //fakestoreapi is a not real database then we update the cache
         if (this.cache.length === 0) {
             await this.getAll();

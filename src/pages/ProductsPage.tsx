@@ -19,12 +19,11 @@ const baseColumn: Partial<GridColDef<Product>> = {
     sortable: false,
 };
 
-const storeApi =  new StoreApi();
+const storeApi = new StoreApi();
 
 export const ProductsPage: React.FC = () => {
     const { currentUser } = useAppContext();
     const [reloadKey, reload] = useReload();
-
 
     const [products, setProducts] = useState<Product[]>([]);
     const [snackBarError, setSnackBarError] = useState<string>();
@@ -71,7 +70,6 @@ export const ProductsPage: React.FC = () => {
         setEditingProduct(undefined);
     }, []);
 
-
     function handleChangePrice(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
         if (!editingProduct) return;
 
@@ -83,10 +81,9 @@ export const ProductsPage: React.FC = () => {
         } else {
             if (!priceRegex.test(event.target.value)) {
                 setPriceError("Invalid price format");
-            } else if (+event.target.value > 999.99){
+            } else if (+event.target.value > 999.99) {
                 setPriceError("The max possible price is 999.99");
-            }
-            else {
+            } else {
                 setPriceError(undefined);
             }
         }
@@ -100,7 +97,7 @@ export const ProductsPage: React.FC = () => {
 
             const editedRemoteProduct = {
                 ...remoteProduct,
-                price: Number(editingProduct.price)
+                price: Number(editingProduct.price),
             };
 
             try {
@@ -291,7 +288,10 @@ function buildProduct(remoteProduct: RemoteProduct): Product {
         id: remoteProduct.id,
         title: remoteProduct.title,
         image: remoteProduct.image,
-        price: remoteProduct.price.toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 })
+        price: remoteProduct.price.toLocaleString("en-US", {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2,
+        }),
     };
 }
 
