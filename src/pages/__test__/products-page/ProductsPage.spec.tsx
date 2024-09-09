@@ -5,7 +5,7 @@ import { AppProvider } from "../../../context/AppProvider";
 import { MockWebServer } from "../../../tests/MockWebServer";
 import { ProductsPage } from "../../ProductsPage";
 import { givenAProducts, givenNoProducts } from "./ProductsPage.fixture";
-import { verifyHeader, verifyRows, waitToTableIsLoaded } from "./ProductsPage.helpers";
+import { openDialogToEditPrice, verifyDialog, verifyHeader, verifyRows, waitToTableIsLoaded } from "./ProductsPage.helpers";
 
 const mockWebServer = new MockWebServer();
 
@@ -19,15 +19,15 @@ describe("ProductsPage", () => {
     afterAll(() => {
         mockWebServer.close();
     });
+    test("Loads and displays title", async () => {
+        givenAProducts(mockWebServer);
+
+        renderComponent(<ProductsPage />);
+
+        await screen.findAllByRole("heading", { name: "Product price updater" });
+    });
 
     describe("Table", () => {
-        test("Loads and displays title", async () => {
-            givenAProducts(mockWebServer);
-
-            renderComponent(<ProductsPage />);
-
-            await screen.findAllByRole("heading", { name: "Product price updater" });
-        });
         test("should render an empty table when there are no data", async () => {
             givenNoProducts(mockWebServer);
 
@@ -48,11 +48,26 @@ describe("ProductsPage", () => {
 
             const allRows = await screen.findAllByRole("row");
 
-            const[header, ...rows] = allRows;
+            const [header, ...rows] = allRows;
 
             verifyHeader(header);
 
             verifyRows(rows, products);
+        });
+    });
+
+    describe("Edit price", () => {
+        test("should render a dialog when clicking on the edit button", async () => {
+            const products = givenAProducts(mockWebServer);
+
+            renderComponent(<ProductsPage />);
+
+            await waitToTableIsLoaded();
+
+            const dialog = await openDialogToEditPrice(0);
+
+            verifyDialog(dialog, products[0]);
+
         });
     });
 });
