@@ -6,8 +6,10 @@ import { MockWebServer } from "../../../tests/MockWebServer";
 import { ProductsPage } from "../../ProductsPage";
 import { givenAProducts, givenNoProducts } from "./ProductsPage.fixture";
 import {
+    changeToNonAdminUser,
     openDialogToEditPrice,
     savePrice,
+    tryOpenDialogToEditPrice,
     typePrice,
     verifyDialog,
     verifyError,
@@ -153,6 +155,20 @@ describe("ProductsPage", () => {
             await savePrice(dialog);
 
             await verifyPriceAndStatusInRow(0, newPrice, "inactive");
+        });
+
+        test("should show error when try to edit price when user is non admin", async() => {
+            givenAProducts(mockWebServer);
+
+            renderComponent(<ProductsPage />);
+
+            await waitToTableIsLoaded();
+
+            await changeToNonAdminUser();
+
+            await tryOpenDialogToEditPrice(0);
+
+            await screen.findByText(/only admin users can edit the price of a product/i);
         });
     });
 });
