@@ -122,3 +122,12 @@ export async function tryOpenDialogToEditPrice(index: number) {
 
     await userEvent.click(updatePriceMenu);
 }
+
+export async function verifySaveBtnIsDisabled(dialog: HTMLElement) {
+    const dialogScope = within(dialog);
+
+    const saveButton = dialogScope.getByRole("button", { name: /save/i });
+
+    // closest is used to to get the nearest father button element
+    expect(saveButton.closest("button")).toBeDisabled();
+}

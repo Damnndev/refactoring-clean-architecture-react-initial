@@ -16,6 +16,7 @@ import {
     verifyHeader,
     verifyPriceAndStatusInRow,
     verifyRows,
+    verifySaveBtnIsDisabled,
     waitToTableIsLoaded,
 } from "./ProductsPage.helpers";
 
@@ -93,6 +94,8 @@ describe("ProductsPage", () => {
             await typePrice(dialog, "-4");
 
             await verifyError(dialog, "Invalid price format");
+
+            await verifySaveBtnIsDisabled(dialog);
         });
         test("should show error message when trying to save with not number price", async () => {
             givenAProducts(mockWebServer);
@@ -106,6 +109,8 @@ describe("ProductsPage", () => {
             await typePrice(dialog, "test");
 
             await verifyError(dialog, "Only numbers are allowed");
+
+            await verifySaveBtnIsDisabled(dialog);
         });
         test("should show error message when trying to a prices greater than max", async () => {
             givenAProducts(mockWebServer);
@@ -119,6 +124,8 @@ describe("ProductsPage", () => {
             await typePrice(dialog, "1000");
 
             await verifyError(dialog, "The max possible price is 999.99");
+
+            await verifySaveBtnIsDisabled(dialog);
         });
 
         test("should edit price proper an mark status as 'active' for a price greater than zero", async () => {
@@ -157,7 +164,7 @@ describe("ProductsPage", () => {
             await verifyPriceAndStatusInRow(0, newPrice, "inactive");
         });
 
-        test("should show error when try to edit price when user is non admin", async() => {
+        test("should show error when try to edit price when user is non admin", async () => {
             givenAProducts(mockWebServer);
 
             renderComponent(<ProductsPage />);
