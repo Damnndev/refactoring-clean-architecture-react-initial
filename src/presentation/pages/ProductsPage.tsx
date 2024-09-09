@@ -8,11 +8,13 @@ import {
 } from "@mui/x-data-grid";
 import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import { StoreApi } from "../../data/api/StoreApi";
+import { buildProduct, GetProductsUseCase } from "../../domain/GetProductsUseCase";
 import { ConfirmationDialog } from "../components/ConfirmationDialog";
 import { Footer } from "../components/Footer";
 import { MainAppBar } from "../components/MainAppBar";
 import { useAppContext } from "../context/useAppContext";
-import { buildProduct, Product, useProducts } from "./useProducts";
+import {  useProducts } from "./useProducts";
+import { Product } from "../../domain/Product";
 
 const baseColumn: Partial<GridColDef<Product>> = {
     disableColumnMenu: true,
@@ -20,17 +22,20 @@ const baseColumn: Partial<GridColDef<Product>> = {
 };
 
 const storeApi = new StoreApi();
+function createGetProductsUseCase(): GetProductsUseCase {
+    return new GetProductsUseCase(storeApi);
+}
 
 export const ProductsPage: React.FC = () => {
     const { currentUser } = useAppContext();
 
     const [snackBarError, setSnackBarError] = useState<string>();
     const [snackBarSuccess, setSnackBarSuccess] = useState<string>();
-
     const [editingProduct, setEditingProduct] = useState<Product | undefined>(undefined);
     const [priceError, setPriceError] = useState<string | undefined>(undefined);
 
-    const { reload, products } = useProducts(storeApi);
+    const getProductUseCase = useMemo(() => createGetProductsUseCase(), []);
+    const { reload, products } = useProducts(getProductUseCase);
     // FIXME: User validation
     const updatingQuantity = useCallback(
         async (id: number) => {
@@ -260,8 +265,6 @@ const ProductImage = styled.img`
 
 type ProductStatus = "active" | "inactive";
 
-
-
 const StatusContainer = styled.div<{ status: ProductStatus }>`
     background: ${props => (props.status === "inactive" ? "red" : "green")};
     display: flex;
@@ -272,6 +275,5 @@ const StatusContainer = styled.div<{ status: ProductStatus }>`
     border-radius: 20px;
     width: 100px;
 `;
-
 
 const priceRegex = /^\d+(\.\d{1,2})?$/;
