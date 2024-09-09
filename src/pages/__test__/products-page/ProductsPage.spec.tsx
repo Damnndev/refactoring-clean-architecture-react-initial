@@ -5,7 +5,15 @@ import { AppProvider } from "../../../context/AppProvider";
 import { MockWebServer } from "../../../tests/MockWebServer";
 import { ProductsPage } from "../../ProductsPage";
 import { givenAProducts, givenNoProducts } from "./ProductsPage.fixture";
-import { openDialogToEditPrice, verifyDialog, verifyHeader, verifyRows, waitToTableIsLoaded } from "./ProductsPage.helpers";
+import {
+    openDialogToEditPrice,
+    typePrice,
+    verifyDialog,
+    verifyError,
+    verifyHeader,
+    verifyRows,
+    waitToTableIsLoaded,
+} from "./ProductsPage.helpers";
 
 const mockWebServer = new MockWebServer();
 
@@ -67,7 +75,46 @@ describe("ProductsPage", () => {
             const dialog = await openDialogToEditPrice(0);
 
             verifyDialog(dialog, products[0]);
+        });
 
+        test("should show error message when trying to save with negative price", async () => {
+            givenAProducts(mockWebServer);
+
+            renderComponent(<ProductsPage />);
+
+            await waitToTableIsLoaded();
+
+            const dialog = await openDialogToEditPrice(0);
+
+            await typePrice(dialog, "-4");
+
+            await verifyError(dialog, "Invalid price format");
+        });
+        test("should show error message when trying to save with not number price", async () => {
+            givenAProducts(mockWebServer);
+
+            renderComponent(<ProductsPage />);
+
+            await waitToTableIsLoaded();
+
+            const dialog = await openDialogToEditPrice(0);
+
+            await typePrice(dialog, "test");
+
+            await verifyError(dialog, "Only numbers are allowed");
+        });
+        test("should show error message when trying to a prices greater than max", async () => {
+            givenAProducts(mockWebServer);
+
+            renderComponent(<ProductsPage />);
+
+            await waitToTableIsLoaded();
+
+            const dialog = await openDialogToEditPrice(0);
+
+            await typePrice(dialog, "1000");
+
+            await verifyError(dialog, "The max possible price is 999.99");
         });
     });
 });

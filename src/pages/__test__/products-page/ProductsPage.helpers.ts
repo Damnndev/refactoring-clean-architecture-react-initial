@@ -64,7 +64,7 @@ export async function openDialogToEditPrice(index: number): Promise<HTMLElement>
     return await screen.findByRole("dialog");
 }
 
-export function verifyDialog(dialog:HTMLElement, product:RemoteProduct){
+export function verifyDialog(dialog: HTMLElement, product: RemoteProduct) {
     const dialogScope = within(dialog);
 
     const image: HTMLImageElement = dialogScope.getByRole("img");
@@ -73,4 +73,19 @@ export function verifyDialog(dialog:HTMLElement, product:RemoteProduct){
     dialogScope.getByText(product.title);
 
     expect(dialogScope.getByDisplayValue(product.price));
+}
+
+export async function typePrice(dialog: HTMLElement, price: string) {
+    const dialogScope = within(dialog);
+
+    const priceTextBox = dialogScope.getByRole("textbox", { name: /price/i });
+
+    await userEvent.clear(priceTextBox);
+    await userEvent.type(priceTextBox, price);
+}
+
+export async function verifyError(dialog: HTMLElement, error: string) {
+    const dialogScope = within(dialog);
+
+   await dialogScope.findByText(error);
 }
