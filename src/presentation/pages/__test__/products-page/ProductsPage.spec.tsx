@@ -2,7 +2,7 @@ import { render, RenderResult, screen } from "@testing-library/react";
 import { ReactNode } from "react";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 import { AppProvider } from "../../../context/AppProvider";
-import { MockWebServer } from "../../../tests/MockWebServer";
+import { MockWebServer } from "../../../../tests/MockWebServer";
 import { ProductsPage } from "../../ProductsPage";
 import { givenAProducts, givenNoProducts } from "./ProductsPage.fixture";
 import {

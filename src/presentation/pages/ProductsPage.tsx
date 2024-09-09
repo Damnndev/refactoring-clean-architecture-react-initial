@@ -7,7 +7,7 @@ import {
     GridValueFormatterParams,
 } from "@mui/x-data-grid";
 import { ChangeEvent, useCallback, useMemo, useState } from "react";
-import { StoreApi } from "../api/StoreApi";
+import { StoreApi } from "../../data/api/StoreApi";
 import { ConfirmationDialog } from "../components/ConfirmationDialog";
 import { Footer } from "../components/Footer";
 import { MainAppBar } from "../components/MainAppBar";
