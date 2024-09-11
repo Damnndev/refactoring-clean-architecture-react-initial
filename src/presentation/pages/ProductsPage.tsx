@@ -15,6 +15,7 @@ import { ConfirmationDialog } from "../components/ConfirmationDialog";
 import { Footer } from "../components/Footer";
 import { MainAppBar } from "../components/MainAppBar";
 import { useProducts } from "./useProducts";
+import { GetProductByIdUseCase } from "../../domain/GetProductByIdUseCase";
 
 const baseColumn: Partial<GridColDef<Product>> = {
     disableColumnMenu: true,
@@ -26,6 +27,9 @@ function createGetProductsUseCase(): GetProductsUseCase {
     const productRepository = new ProductApiRepository(storeApi);
     return new GetProductsUseCase(productRepository);
 }
+function createGetProductByIdUseCase(): GetProductByIdUseCase {
+    return new GetProductByIdUseCase(storeApi);
+}
 
 export const ProductsPage: React.FC = () => {
     /**
@@ -36,6 +40,7 @@ export const ProductsPage: React.FC = () => {
     const [priceError, setPriceError] = useState<string | undefined>(undefined);
 
     const getProductUseCase = useMemo(() => createGetProductsUseCase(), []);
+    const getProductByIdUseCase = useMemo(() => createGetProductByIdUseCase(), []);
     const {
         reload,
         products,
@@ -44,7 +49,7 @@ export const ProductsPage: React.FC = () => {
         setEditingProduct,
         error,
         cancelEditPrice,
-    } = useProducts(getProductUseCase, storeApi);
+    } = useProducts(getProductUseCase, getProductByIdUseCase);
 
     useEffect(() => setSnackBarError(error), [error]);
 
