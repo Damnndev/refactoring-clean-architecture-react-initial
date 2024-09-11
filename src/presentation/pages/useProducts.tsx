@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { GetProductByIdUseCase, ResourceNotFoundError } from "../../domain/GetProductByIdUseCase";
+import { GetProductByIdUseCase } from "../../domain/GetProductByIdUseCase";
 import { GetProductsUseCase } from "../../domain/GetProductsUseCase";
 import { Product } from "../../domain/Product";
 import { useAppContext } from "../context/useAppContext";
 import { useReload } from "../hooks/useReload";
+import { ResourceNotFoundError } from "../../domain/ProductRepository";
 
 export function useProducts(
     getProductsUseCase: GetProductsUseCase,
