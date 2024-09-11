@@ -7,30 +7,17 @@ import {
     GridValueFormatterParams,
 } from "@mui/x-data-grid";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
-import { StoreApi } from "../../data/api/StoreApi";
-import { ProductApiRepository } from "../../data/ProductApiRepository";
-import { GetProductsUseCase } from "../../domain/GetProductsUseCase";
+import { CompositionRoot } from "../../CompositionRoot";
 import { Product } from "../../domain/Product";
 import { ConfirmationDialog } from "../components/ConfirmationDialog";
 import { Footer } from "../components/Footer";
 import { MainAppBar } from "../components/MainAppBar";
 import { useProducts } from "./useProducts";
-import { GetProductByIdUseCase } from "../../domain/GetProductByIdUseCase";
 
 const baseColumn: Partial<GridColDef<Product>> = {
     disableColumnMenu: true,
     sortable: false,
 };
-
-const storeApi = new StoreApi();
-const productRepository = new ProductApiRepository(storeApi);
-
-function createGetProductsUseCase(): GetProductsUseCase {
-    return new GetProductsUseCase(productRepository);
-}
-function createGetProductByIdUseCase(): GetProductByIdUseCase {
-    return new GetProductByIdUseCase(productRepository);
-}
 
 export const ProductsPage: React.FC = () => {
     /**
@@ -40,8 +27,15 @@ export const ProductsPage: React.FC = () => {
     const [snackBarSuccess, setSnackBarSuccess] = useState<string>();
     const [priceError, setPriceError] = useState<string | undefined>(undefined);
 
-    const getProductUseCase = useMemo(() => createGetProductsUseCase(), []);
-    const getProductByIdUseCase = useMemo(() => createGetProductByIdUseCase(), []);
+    const getProductUseCase = useMemo(
+        () => CompositionRoot.getInsance().provideGetProductsUseCase(),
+        []
+    );
+    const getProductByIdUseCase = useMemo(
+        () => CompositionRoot.getInsance().provideGetProductByIdUseCase(),
+        []
+    );
+
     const {
         reload,
         products,
@@ -77,6 +71,7 @@ export const ProductsPage: React.FC = () => {
     // FIXME: Save price
     async function saveEditPrice(): Promise<void> {
         if (editingProduct) {
+            const storeApi = CompositionRoot.getInsance().provideStoreApi();
             const remoteProduct = await storeApi.get(editingProduct.id);
 
             if (!remoteProduct) return;
