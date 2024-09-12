@@ -8,13 +8,12 @@ import {
 } from "@mui/x-data-grid";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { CompositionRoot } from "../../CompositionRoot";
-import { Product } from "../../domain/Product";
 import { ConfirmationDialog } from "../components/ConfirmationDialog";
 import { Footer } from "../components/Footer";
 import { MainAppBar } from "../components/MainAppBar";
-import { useProducts } from "./useProducts";
+import { ProductStatus, ProductViewModel, useProducts } from "./useProducts";
 
-const baseColumn: Partial<GridColDef<Product>> = {
+const baseColumn: Partial<GridColDef<ProductViewModel>> = {
     disableColumnMenu: true,
     sortable: false,
 };
@@ -84,8 +83,7 @@ export const ProductsPage: React.FC = () => {
         }
     }
 
-    // FIXME: Define columns
-    const columns: GridColDef<Product>[] = useMemo(
+    const columns: GridColDef<ProductViewModel>[] = useMemo(
         () => [
             { ...baseColumn, field: "id", headerName: "ID", width: 70 },
             { ...baseColumn, field: "title", headerName: "Title", width: 600 },
@@ -123,11 +121,9 @@ export const ProductsPage: React.FC = () => {
                 headerAlign: "center",
                 align: "center",
                 renderCell: params => {
-                    const status = +params.row.price === 0 ? "inactive" : "active";
-
                     return (
-                        <StatusContainer status={status}>
-                            <Typography variant="body1">{status}</Typography>
+                        <StatusContainer status={params.row.status}>
+                            <Typography variant="body1">{params.row.status}</Typography>
                         </StatusContainer>
                     );
                 },
@@ -150,7 +146,6 @@ export const ProductsPage: React.FC = () => {
         [updatingQuantity]
     );
 
-    // FIXME: Render page
     return (
         <Stack direction="column" sx={{ minHeight: "100vh", overflow: "scroll" }}>
             <MainAppBar />
@@ -159,7 +154,7 @@ export const ProductsPage: React.FC = () => {
                 <Typography variant="h3" component="h1" gutterBottom>
                     {"Product price updater"}
                 </Typography>
-                <DataGrid<Product>
+                <DataGrid<ProductViewModel>
                     columnBuffer={10}
                     rowHeight={300}
                     rows={products}
@@ -232,8 +227,6 @@ const ProductImage = styled.img`
     height: 200px;
     object-fit: contain;
 `;
-
-type ProductStatus = "active" | "inactive";
 
 const StatusContainer = styled.div<{ status: ProductStatus }>`
     background: ${props => (props.status === "inactive" ? "red" : "green")};
