@@ -11,7 +11,8 @@ import { CompositionRoot } from "../../CompositionRoot";
 import { ConfirmationDialog } from "../components/ConfirmationDialog";
 import { Footer } from "../components/Footer";
 import { MainAppBar } from "../components/MainAppBar";
-import { ProductStatus, ProductViewModel, useProducts } from "./useProducts";
+import { ProductViewModel, useProducts } from "./useProducts";
+import { ProductStatus } from "../../domain/Product";
 
 const baseColumn: Partial<GridColDef<ProductViewModel>> = {
     disableColumnMenu: true,
